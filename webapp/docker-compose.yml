@@ -1,17 +1,18 @@
 services:
-  nginx:
-    image: nginx:1.24
-    volumes:
-      - ./etc/nginx/conf.d:/etc/nginx/conf.d
-      - ./public:/public
-    ports:
-      - "80:80"
-    links:
-      - app
+#  nginx:
+#    image: nginx:1.24
+#    volumes:
+#      - ./etc/nginx/conf.d:/etc/nginx/conf.d
+#      - ./public:/public
+#    ports:
+#      - "80:80"
+#    links:
+#      - app
 
   app:
     # Go実装の場合は golang/ PHP実装の場合は php/
-    build: ruby/
+    build: golang/
+    container_name: app
     environment:
       ISUCONP_DB_HOST: mysql
       ISUCONP_DB_PORT: 3306
@@ -25,6 +26,8 @@ services:
     volumes:
       - ./public:/home/public
     init: true
+    ports:
+      - 8080:8080
     deploy:
       resources:
         limits:
@@ -33,6 +36,7 @@ services:
 
   mysql:
     image: mysql:8.0
+    container_name: mysql
     environment:
       #- "TZ=Asia/Tokyo"
       - "MYSQL_ROOT_HOST=%"
@@ -50,6 +54,7 @@ services:
           memory: 1g
 
   memcached:
+    container_name: memcached
     image: memcached:1.6
 
 volumes:
